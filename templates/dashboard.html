@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Inventory Dashboard</title>
+<link rel="stylesheet" href="../static/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <h1>📦 Smart Inventory System</h1>
+    <a href="/add" class="add-btn">+ Add Product</a>
+  </nav>
+
+   {% if low > 0 %}
+<div class="alert-banner">
+  ⚠️ {{ low }} product(s) are running low on stock. Please restock soon!
+</div>
+{% endif %}
+
+  <!-- Stats Cards -->
+  <section class="cards">
+  <div class="card">
+    <h3>Total Products</h3>
+    <p>{{ total }}</p>
+  </div>
+
+  <div class="card warning">
+    <h3>Low Stock</h3>
+    <p>{{ low }}</p>
+  </div>
+
+  <div class="card success">
+    <h3>Healthy Stock</h3>
+    <p>{{ healthy }}</p>
+  </div>
+</section>
+
+
+  <!-- Product Table -->
+  <section class="table-section">
+
+    <h2>📊 Inventory Overview</h2>
+    <input 
+  type="text" 
+  id="searchInput" 
+  placeholder="🔍 Search product..."
+  class="search-box"
+  onkeyup="searchProduct()"
+>
+
+   <table id="productTable">
+
+      <thead>
+        <tr>
+          <th>Product</th>
+         <th>Quantity</th>
+         <th>Status</th>
+         <th>Action</th>
+
+        </tr>
+      </thead>
+      <tbody>
+  {% for p in products %}
+  <tr>
+    <td>{{ p.name }}</td>
+    <td>{{ p.quantity }}</td>
+    <td>
+      {% if p.status == "Low" %}
+        <span class="status low">Low</span>
+      {% else %}
+        <span class="status ok">Healthy</span>
+      {% endif %}
+    </td>
+    <td>
+ <a href="/delete/{{ p.name }}" 
+   class="delete-btn"
+   onclick="return confirm('Are you sure you want to delete this product?')">
+   Delete
+</a>
+
+</td>
+
+  </tr>
+  {% endfor %}
+</tbody>
+
+    </table>
+  </section>
+<script>
+function searchProduct() {
+  let input = document.getElementById("searchInput");
+  let filter = input.value.toLowerCase();
+  let table = document.getElementById("productTable");
+  let rows = table.getElementsByTagName("tr");
+
+  for (let i = 1; i < rows.length; i++) {
+    let productName = rows[i].getElementsByTagName("td")[0];
+    if (productName) {
+      let textValue = productName.textContent || productName.innerText;
+      rows[i].style.display = textValue.toLowerCase().includes(filter)
+        ? ""
+        : "none";
+    }
+  }
+}
+</script>
+
+</body>
+</html>
